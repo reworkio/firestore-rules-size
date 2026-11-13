@@ -1,0 +1,36 @@
+name: Firestore rules size
+description: Fail a pull request when a Firestore ruleset nears its size ceilings, before a deploy does.
+branding:
+  icon: shield
+  color: purple
+inputs:
+  file:
+    description: Path to the rules file.
+    default: firestore.rules
+  fail-at:
+    description: Share of a ceiling (0 to 1) at which the check fails.
+    default: '0.95'
+  warn-at:
+    description: Share of a ceiling (0 to 1) at which it warns.
+    default: '0.85'
+  ratio:
+    description: Compiled bytes per byte of comment-free source. Leave empty for the built-in measurement.
+    default: ''
+  ignore-source:
+    description: Set to 'true' when your deploy strips comments first.
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        FRS_FILE: ${{ inputs.file }}
+        FRS_FAIL_AT: ${{ inputs.fail-at }}
+        FRS_WARN_AT: ${{ inputs.warn-at }}
+        FRS_RATIO: ${{ inputs.ratio }}
+        FRS_IGNORE_SOURCE: ${{ inputs.ignore-source }}
+      run: |
+        args=("$FRS_FILE" --fail-at "$FRS_FAIL_AT" --warn-at "$FRS_WARN_AT")
+        if [ -n "$FRS_RATIO" ]; then args+=(--ratio "$FRS_RATIO"); fi
+        if [ "$FRS_IGNORE_SOURCE" = "true" ]; then args+=(--ignore-source); fi
+        node "$GITHUB_ACTION_PATH/bin/cli.js" "${args[@]}"

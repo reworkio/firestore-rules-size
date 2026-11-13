@@ -1,0 +1,13 @@
+{
+  "name": "firestore-rules-size",
+  "version": "0.1.0",
+  "description": "Check how close a Firestore security ruleset is to its size ceilings before a deploy finds out.",
+  "license": "MIT",
+  "author": "REWORKIO",
+  "main": "lib/index.js",
+  "bin": { "firestore-rules-size": "bin/cli.js" },
+  "files": ["bin", "lib", "action.yml"],
+  "engines": { "node": ">=18" },
+  "scripts": { "test": "node --test" },
+  "keywords": ["firebase", "firestore", "security-rules", "ci", "size-limit"]
+}
